@@ -81,12 +81,11 @@ endif()
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
 
 ## Mark cpp header files for installation
-install(FILES
-  include/${PROJECT_NAME}/Ptime.h
-  include/${PROJECT_NAME}/TimeDuration.h
+install(DIRECTORY
+  include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
-install(DIRECTORY include/${PROJECT_NAME}/boost
+install(DIRECTORY include/${PROJECT_NAME}
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
   FILES_MATCHING PATTERN "*.h"
 )
