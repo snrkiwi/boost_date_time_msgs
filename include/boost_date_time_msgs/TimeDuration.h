@@ -168,9 +168,7 @@ struct Printer< ::boost::posix_time::time_duration >
 {
   template<typename Stream> static void stream(Stream& s, const std::string& indent, const ::boost::posix_time::time_duration& d)
   {
-    
-    s << indent << "data: ";
-    s << indent << to_simple_string(d);
+    s << indent << to_simple_string(d) << std::endl;
   }
 };
 
