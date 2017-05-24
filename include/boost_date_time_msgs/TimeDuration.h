@@ -2,9 +2,8 @@
 // using a standard std_msgs/Duration.msg
 
 
-#ifndef BOOST_DATE_TIME_DATE_DURATION_H
-#define BOOST_DATE_TIME_DATE_DURATION_H
-
+#ifndef BOOST_DATE_TIME_DATE_MSGS_TIME_DURATION_H
+#define BOOST_DATE_TIME_DATE_MSGS_TIME_DURATION_H
 
 #include <string>
 
@@ -124,34 +123,33 @@ struct Serializer<::boost::posix_time::time_duration>
   template<typename Stream>
   inline static void write(Stream& stream, const ::boost::posix_time::time_duration& d)
   {
-    ros::Duration tmp;
-    tmp.sec = d.total_seconds();
+    int32_t sec, nsec;
+    sec = d.total_seconds();
 #if defined(BOOST_DATE_TIME_HAS_NANOSECONDS) 
-    tmp.nsec = d.fractional_seconds(); 
+    nsec = d.fractional_seconds();
 #else 
-    #warning boost time uses only microseconds nanoseconds are lost 
-    tmp.nsec = d.fractional_seconds()*1000; 
+    nsec = d.fractional_seconds() * 1000;
 #endif 
-    stream.next(tmp);
+    stream.next(sec);
+    stream.next(nsec);
   }
 
   template<typename Stream>
   inline static void read(Stream& stream, ::boost::posix_time::time_duration& d)
   {
-    ros::Duration tmp;
-    
-    stream.next(tmp);
-    d = tmp.toBoost();
+    int32_t sec, nsec;
+    stream.next(sec);
+    stream.next(nsec);
+#if defined(BOOST_DATE_TIME_HAS_NANOSECONDS)
+    d = ::boost::posix_time::seconds(sec) + ::boost::posix_time::nanoseconds(nsec);
+#else
+    d = ::boost::posix_time::seconds(sec) + ::boost::posix_time::microseconds(nsec/1000.0);
+#endif
   }
 
   inline static uint32_t serializedLength(const ::boost::posix_time::time_duration&)
   {
-    uint32_t size = 0;
-    ros::Duration tmp;
-
-    size += serializationLength(tmp);
-
-    return size;
+    return 8u;
   }
 };
 
@@ -175,4 +173,4 @@ struct Printer< ::boost::posix_time::time_duration >
 } // namespace message_operations
 } // namespace ros
 
-#endif // BOOST_DATE_TIME_PTIME_H
+#endif // BOOST_DATE_TIME_MSGS_TIME_DURATION_H
